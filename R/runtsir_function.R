@@ -253,11 +253,11 @@ runtsir <- function(data, xreg = 'cumcases',
   
   if(seasonality == 'standard'){
     
-    period <- rep(1:(52/IP), round(nrow(data)+1))[1:(nrow(data)-1)]
+    period <- rep(1:(12/IP), round(nrow(data)+1))[1:(nrow(data)-1)]
     
     if(IP == 1){
       
-      period <- rep(1:(52/2),each=2, round(nrow(data)+1))[1:(nrow(data)-1)]
+      period <- rep(1:(12/2),each=2, round(nrow(data)+1))[1:(nrow(data)-1)]
       
     }
     
@@ -266,10 +266,10 @@ runtsir <- function(data, xreg = 'cumcases',
   if(seasonality == 'schoolterm'){
     
     ## do school time in base two weeks and then interpolate
-    term <- rep(1,26)
-    term[c(1,8,15,16,17,18,19,23,26)] <- 2
+    term <- rep(1,12)
+    term[c(1,2,7,8)] <- 2
     
-    iterm <- round(approx(term,n=52/IP)$y)
+    iterm <- round(approx(term,n=12/IP)$y)
     period <- rep(iterm, round(nrow(data)+1))[1:(nrow(data)-1)]
     
   }
@@ -287,8 +287,8 @@ runtsir <- function(data, xreg = 'cumcases',
   
   pop <- data$pop
   
-  minSmean <- max(0.01*pop,-(min(Z)+1))
-  Smean <- seq(minSmean, 0.4*mean(pop), length=250)
+  minSmean <- max(0.001*pop,-(min(Z)+1))
+  Smean <- seq(minSmean, 0.2*mean(pop), length=250)
   
   loglik <- rep(NA, length(Smean))
   
@@ -391,7 +391,7 @@ runtsir <- function(data, xreg = 'cumcases',
   contact <- as.data.frame(cbind('time'=seq(1,length(beta[period]),1),
                                  betalow[period],beta[period],betahigh[period]),row.names=F)
   names(contact) <- c('time','betalow','beta','betahigh')
-  contact <- head(contact,52/IP)
+  contact <- head(contact,12/IP)
   
   ## est initial conditions using determinsitic skeleton
   
